@@ -16,10 +16,9 @@ import { BreedState } from '../../../application/state/breed.state';
 })
 export class BreedsPageComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  searchResults$!: Observable<Breed[]>;
+  breeds$ = this.breedState.breeds$;
   isLoading$ = this.breedState.loading$;
   error: string | null = null;
-  breeds$ = this.breedState.breeds$;
 
   constructor(
     private breedService: BreedService,
@@ -32,49 +31,46 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
     this.detectLoadingState();
   }
 
-  private detectLoadingState(): void {
-    this.isLoading$.subscribe((loading) => {
-      console.log('Loading state:', loading);
-      this.cdr.detectChanges();
-    });
-  }
-
   loadAllBreeds(): void {
     this.error = null;
     this.breedState.setLoading(true);
-    this.cdr.detectChanges(); // Trigger change detection
 
-    this.searchResults$ = this.breedService.loadAllBreeds().pipe(
-      takeUntil(this.destroy$),
-      finalize(() => {
-        this.breedState.setLoading(false);
-      }),
-      catchError((error) => {
-        this.error = 'Failed to load breeds. Please try again later.';
-        console.error('Error loading breeds:', error);
-        this.breedState.setLoading(false);
-        throw error;
-      })
-    );
+    this.breedService
+      .loadAllBreeds()
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.breedState.setLoading(false);
+        }),
+        catchError((error) => {
+          this.error = 'Failed to load breeds. Please try again later.';
+          console.error('Error loading breeds:', error);
+          this.breedState.setLoading(false);
+          throw error;
+        })
+      )
+      .subscribe();
   }
 
   onSearch(criteria: BreedSearchCriteria): void {
     this.error = null;
     this.breedState.setLoading(true);
-    this.cdr.detectChanges(); // Trigger change detection
 
-    this.searchResults$ = this.breedService.searchBreeds(criteria).pipe(
-      takeUntil(this.destroy$),
-      finalize(() => {
-        this.breedState.setLoading(false);
-      }),
-      catchError((error) => {
-        this.error = 'Search failed. Please try again.';
-        console.error('Search error:', error);
-        this.breedState.setLoading(false);
-        throw error;
-      })
-    );
+    this.breedService
+      .searchBreeds(criteria)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.breedState.setLoading(false);
+        }),
+        catchError((error) => {
+          this.error = 'Search failed. Please try again.';
+          console.error('Search error:', error);
+          this.breedState.setLoading(false);
+          throw error;
+        })
+      )
+      .subscribe();
   }
 
   ngOnDestroy(): void {
@@ -89,6 +85,26 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
     breedName: string;
     images: BreedImage[];
   }): void {
-    this.breedService.loadBreedImages(breedName).subscribe();
+    this.breedService
+      .loadBreedImages(breedName)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.breedState.setLoading(false);
+        }),
+        catchError((error) => {
+          this.error = 'Search failed. Please try again.';
+          console.error('Search error:', error);
+          this.breedState.setLoading(false);
+          throw error;
+        })
+      )
+      .subscribe();
+  }
+
+  private detectLoadingState(): void {
+    this.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.cdr.markForCheck();
+    });
   }
 }

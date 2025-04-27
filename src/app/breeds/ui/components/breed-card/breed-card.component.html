@@ -36,8 +36,6 @@
     </div>
 
     <!-- Images Gallery (lazy loaded) -->
-    {{ breed | json }}
-
     <div class="images-container" *ngIf="showImages">
       <ng-container *ngIf="breed.images?.length; else noImages">
         <div class="image-grid">

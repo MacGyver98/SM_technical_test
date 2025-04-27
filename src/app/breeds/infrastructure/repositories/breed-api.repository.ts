@@ -19,11 +19,14 @@ export class BreedApiRepository implements BreedRepository {
   private transformToBreedModels(
     apiResponse: Record<string, string[]>
   ): Breed[] {
-    return Object.entries(apiResponse).map(([name, subBreeds]) => ({
-      name,
-      subBreeds,
-      images: [], // Initialize empty array
-    }));
+    const transformedBreeds = Object.entries(apiResponse).map(
+      ([name, subBreeds]) => ({
+        name,
+        subBreeds,
+        images: [], // Initialize empty array
+      })
+    );
+    return transformedBreeds;
   }
 
   private filterBreeds(

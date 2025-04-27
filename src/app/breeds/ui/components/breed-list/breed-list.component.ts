@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   Output,
   EventEmitter,
+  OnChanges,
 } from '@angular/core';
 import {
   Breed,
@@ -49,6 +50,7 @@ export class BreedListComponent {
       )
       .subscribe((images) => {
         this.breedState.addImagesToBreed(breedName, images);
+        this.imagesLoaded.emit({ breedName, images });
       });
   }
 }

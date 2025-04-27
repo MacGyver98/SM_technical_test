@@ -14,9 +14,8 @@
     <span>{{ error }}</span>
   </div>
 
-  <!-- Results -->
   <app-breed-list
-    [breeds]="searchResults$ | async"
+    [breeds]="breeds$ | async"
     (imagesLoaded)="handleImagesLoaded($event)"
   />
 </div>
