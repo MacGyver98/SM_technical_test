@@ -1,0 +1,30 @@
+<div class="search-container">
+  <mat-form-field appearance="outline" floatLabel="always" class="search-field">
+    <mat-label>Search breeds</mat-label>
+    <input
+      matInput
+      [formControl]="searchControl"
+      placeholder="Type to search..."
+    />
+
+    <button
+      mat-icon-button
+      matSuffix
+      *ngIf="searchControl.value"
+      (click)="clearSearch()"
+      aria-label="Clear search"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-slide-toggle
+    [formControl]="includeSubBreedsControl"
+    color="primary"
+    class="subbreed-toggle"
+  >
+    Include sub-breeds
+  </mat-slide-toggle>
+</div>

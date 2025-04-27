@@ -1,0 +1,70 @@
+<mat-card class="breed-card" [class.expanded]="showImages">
+  <!-- Breed Header Section -->
+  <mat-card-header>
+    <mat-card-title class="breed-title">
+      {{ breed.name | titlecase }}
+    </mat-card-title>
+
+    <mat-card-subtitle *ngIf="breed.subBreeds?.length" class="subbreed-count">
+      {{ breed.subBreeds.length }} sub-breed{{
+        breed.subBreeds.length !== 1 ? "s" : ""
+      }}
+    </mat-card-subtitle>
+
+    <button
+      mat-icon-button
+      class="toggle-button"
+      (click)="toggleImages()"
+      matTooltip="{{ showImages ? 'Hide images' : 'Show images' }}"
+    >
+      <mat-icon>{{ showImages ? "expand_less" : "expand_more" }}</mat-icon>
+    </button>
+  </mat-card-header>
+
+  <!-- Main Content Section -->
+  <mat-card-content>
+    <!-- Sub-breeds List (only shown if exists) -->
+    <div *ngIf="breed.subBreeds?.length" class="subbreeds-container">
+      <mat-chip-listbox>
+        <mat-chip-option
+          *ngFor="let subBreed of breed.subBreeds"
+          (click)="loadSubBreedImages(subBreed)"
+        >
+          {{ subBreed | titlecase }}
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+
+    <!-- Images Gallery (lazy loaded) -->
+    <div class="images-container" *ngIf="showImages">
+      <ng-container *ngIf="breed.images?.length; else noImages">
+        <div class="image-grid">
+          <img
+            *ngFor="let image of breed.images"
+            [src]="image.url"
+            [alt]="'Image of ' + breed.name"
+            class="breed-image"
+            loading="lazy"
+            (load)="onImageLoad()"
+            (error)="onImageError($event)"
+          />
+        </div>
+      </ng-container>
+
+      <ng-template #noImages>
+        <div class="no-images">
+          <mat-icon>image_not_supported</mat-icon>
+          <p>No images available</p>
+        </div>
+      </ng-template>
+    </div>
+  </mat-card-content>
+
+  <!-- Loading State -->
+  <mat-progress-bar
+    *ngIf="isLoadingImages"
+    mode="indeterminate"
+    color="accent"
+    class="loading-bar"
+  ></mat-progress-bar>
+</mat-card>

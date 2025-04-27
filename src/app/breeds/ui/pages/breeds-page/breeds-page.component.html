@@ -1,0 +1,33 @@
+<div class="breeds-page">
+  <app-breed-search (searchChange)="onSearch($event)" />
+
+  <!-- Loading State -->
+  <mat-progress-bar
+    *ngIf="isLoading$ | async"
+    mode="indeterminate"
+    color="primary"
+  />
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-message">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Results -->
+  <app-breed-list
+    [breeds]="searchResults$ | async"
+    (imagesLoaded)="handleImagesLoaded($event)"
+  />
+
+  <!-- Empty State -->
+  <div
+    *ngIf="
+      (searchResults$ | async)?.length === 0 && !(isLoading$ | async) && !error
+    "
+    class="empty-state"
+  >
+    <mat-icon>pets</mat-icon>
+    <p>No breeds found</p>
+  </div>
+</div>
