@@ -20,6 +20,7 @@ import { BreedCardComponent } from './ui/components/breed-card/breed-card.compon
 import { BreedListComponent } from './ui/components/breed-list/breed-list.component';
 import { BreedSearchComponent } from './ui/components/breed-search/breed-search.component';
 import { BreedsPageComponent } from './ui/pages/breeds-page/breeds-page.component';
+import { BreedsRoutingModule } from './breeds-routing.module';
 
 
 @NgModule({
@@ -41,6 +42,7 @@ import { BreedsPageComponent } from './ui/pages/breeds-page/breeds-page.componen
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatTooltipModule,
+    BreedsRoutingModule,
   ],
   exports: [BreedsPageComponent],
   providers: [
