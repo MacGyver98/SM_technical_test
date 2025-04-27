@@ -11,7 +11,10 @@ export class BreedState {
   loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
   setBreeds(breeds: Breed[]): void {
+    console.log('breeds: ', breeds);
     this.breedsSubject.next(breeds);
+    const breedsAfter = this.breedsSubject.getValue();
+    console.log('breedsAfter: ', breedsAfter);
   }
 
   setLoading(loading: boolean): void {

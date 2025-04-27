@@ -11,7 +11,7 @@ import {
   LoadBreedImagesEvent,
 } from '../../../domain/models/breed.model';
 import { BreedApiRepository } from '../../../infrastructure/repositories/breed-api.repository';
-import { catchError, of } from 'rxjs';
+import { catchError, of, Observable } from 'rxjs';
 import { BreedState } from './../../../application/state/breed.state';
 
 @Component({
@@ -26,6 +26,8 @@ export class BreedListComponent {
     breedName: string;
     images: BreedImage[];
   }>();
+
+  loading$: Observable<boolean> = this.breedState.loading$;
 
   constructor(
     private breedApiRepository: BreedApiRepository,

@@ -10,9 +10,16 @@
   </ng-container>
 
   <ng-template #noBreeds>
-    <div class="no-results">
+    <div class="no-results" *ngIf="!(loading$ | async); else loading">
       <mat-icon>search_off</mat-icon>
       <p>No breeds to display</p>
     </div>
+
+    <ng-template #loading>
+      <div class="no-results">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Searching for breeds...</p>
+      </div>
+    </ng-template>
   </ng-template>
 </div>

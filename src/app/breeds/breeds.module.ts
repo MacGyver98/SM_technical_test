@@ -10,9 +10,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { BreedState } from './application/state/breed.state';
 import { GetBreedsUseCase } from './application/usecases/get-breeds.usecase';
 import { SearchBreedsUseCase } from './application/usecases/search-breeds.usecase';
 import { BreedApiRepository } from './infrastructure/repositories/breed-api.repository';
@@ -41,6 +41,7 @@ import { BreedsRoutingModule } from './breeds-routing.module';
     MatIconModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    MatSlideToggleModule,
     MatTooltipModule,
     BreedsRoutingModule,
   ],
@@ -51,10 +52,7 @@ import { BreedsRoutingModule } from './breeds-routing.module';
 
     // Use cases
     GetBreedsUseCase,
-    SearchBreedsUseCase,
-
-    // State (optional)
-    BreedState,
+    SearchBreedsUseCase
   ],
 })
 export class BreedsModule {}

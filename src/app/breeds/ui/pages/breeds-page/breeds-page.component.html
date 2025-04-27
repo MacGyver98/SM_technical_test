@@ -19,15 +19,4 @@
     [breeds]="searchResults$ | async"
     (imagesLoaded)="handleImagesLoaded($event)"
   />
-
-  <!-- Empty State -->
-  <div
-    *ngIf="
-      (searchResults$ | async)?.length === 0 && !(isLoading$ | async) && !error
-    "
-    class="empty-state"
-  >
-    <mat-icon>pets</mat-icon>
-    <p>No breeds found</p>
-  </div>
 </div>

@@ -1,7 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, catchError } from 'rxjs/operators';
-import { Breed, BreedImage, BreedSearchCriteria } from '../../../domain/models/breed.model';
+import { takeUntil, catchError, finalize } from 'rxjs/operators';
+import {
+  Breed,
+  BreedImage,
+  BreedSearchCriteria,
+} from '../../../domain/models/breed.model';
 import { BreedService } from '../../../../core/services/breed.service';
 import { BreedState } from '../../../application/state/breed.state';
 
@@ -17,19 +21,38 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
   error: string | null = null;
   breeds$ = this.breedState.breeds$;
 
-  constructor(private breedService: BreedService, private breedState: BreedState) {}
+  constructor(
+    private breedService: BreedService,
+    private breedState: BreedState,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadAllBreeds();
+    this.detectLoadingState();
+  }
+
+  private detectLoadingState(): void {
+    this.isLoading$.subscribe((loading) => {
+      console.log('Loading state:', loading);
+      this.cdr.detectChanges();
+    });
   }
 
   loadAllBreeds(): void {
     this.error = null;
+    this.breedState.setLoading(true);
+    this.cdr.detectChanges(); // Trigger change detection
+
     this.searchResults$ = this.breedService.loadAllBreeds().pipe(
       takeUntil(this.destroy$),
+      finalize(() => {
+        this.breedState.setLoading(false);
+      }),
       catchError((error) => {
         this.error = 'Failed to load breeds. Please try again later.';
         console.error('Error loading breeds:', error);
+        this.breedState.setLoading(false);
         throw error;
       })
     );
@@ -37,11 +60,18 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
 
   onSearch(criteria: BreedSearchCriteria): void {
     this.error = null;
+    this.breedState.setLoading(true);
+    this.cdr.detectChanges(); // Trigger change detection
+
     this.searchResults$ = this.breedService.searchBreeds(criteria).pipe(
       takeUntil(this.destroy$),
+      finalize(() => {
+        this.breedState.setLoading(false);
+      }),
       catchError((error) => {
         this.error = 'Search failed. Please try again.';
         console.error('Search error:', error);
+        this.breedState.setLoading(false);
         throw error;
       })
     );
