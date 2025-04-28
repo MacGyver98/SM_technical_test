@@ -40,7 +40,7 @@ export class BreedService {
     );
   }
 
-  getRandomBreedImage(breedName: string): Observable<string> {
-    return this.breedApiRepository.getRandomBreedImage(breedName);
-  }
+  // getRandomBreedImage(breedName: string): Observable<string> {
+  //   return this.breedApiRepository.getRandomBreedImage(breedName);
+  // }
 }

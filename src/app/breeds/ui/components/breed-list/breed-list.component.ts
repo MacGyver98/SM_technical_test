@@ -1,18 +1,16 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  Output,
+  Component,
   EventEmitter,
-  OnChanges,
+  Input,
+  Output
 } from '@angular/core';
+import { catchError, Observable, of } from 'rxjs';
 import {
   Breed,
-  BreedImage,
-  LoadBreedImagesEvent,
+  BreedImage
 } from '../../../domain/models/breed.model';
 import { BreedApiRepository } from '../../../infrastructure/repositories/breed-api.repository';
-import { catchError, of, Observable } from 'rxjs';
 import { BreedState } from './../../../application/state/breed.state';
 
 @Component({
@@ -22,7 +20,7 @@ import { BreedState } from './../../../application/state/breed.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreedListComponent {
-  @Input() breeds: Breed[] | null = [];
+  @Input() selectedBreeds: Breed[] | null = [];
   @Output() imagesLoaded = new EventEmitter<{
     breedName: string;
     images: BreedImage[];
@@ -49,7 +47,7 @@ export class BreedListComponent {
         })
       )
       .subscribe((images) => {
-        this.breedState.addImagesToBreed(breedName, images);
+        this.breedState.addImagesToSelectedBreeds(breedName, images);
         this.imagesLoaded.emit({ breedName, images });
       });
   }

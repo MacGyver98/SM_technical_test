@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, forkJoin } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import {
   Breed,
   BreedImage,
@@ -29,12 +29,12 @@ export class BreedApiRepository implements BreedRepository {
     return transformedBreeds;
   }
 
-  private filterBreeds(
+  private filterBreedsWithImages(
     breeds: Breed[],
     criteria: BreedSearchCriteria
-  ): Breed[] {
+  ): Observable<Breed[]> {
     const term = criteria.searchTerm.toLowerCase();
-    return breeds.filter((breed) => {
+    const filteredBreeds = breeds.filter((breed) => {
       const nameMatch = breed.name.toLowerCase().includes(term);
       const subBreedMatch =
         criteria.includeSubBreeds &&
@@ -42,6 +42,14 @@ export class BreedApiRepository implements BreedRepository {
 
       return nameMatch || subBreedMatch;
     });
+
+    const breedsWithImages$ = filteredBreeds.map((breed) =>
+      this.getRandomBreedImage(breed.name).pipe(
+        map((imageUrl) => ({ ...breed, imageUrl }))
+      )
+    );
+
+    return breedsWithImages$.length ? forkJoin(breedsWithImages$) : of([]);
   }
 
   getAllBreeds(): Observable<Breed[]> {
@@ -92,14 +100,16 @@ export class BreedApiRepository implements BreedRepository {
   }
 
   getRandomBreedImage(breedName: string): Observable<string> {
-    const cacheKey = `${breedName}-random`;
+    const cacheKey = `${breedName}`;
 
     if (this.breedImagesCache.has(cacheKey)) {
       return of(this.breedImagesCache.get(cacheKey)![0].url);
     }
 
     return this.http
-      .get<{ message: string }>(`${this.API_URL}/breed/${breedName}/images/random`)
+      .get<{ message: string }>(
+        `${this.API_URL}/breed/${breedName}/images/random`
+      )
       .pipe(
         map((response) => {
           const imageUrl = response.message;
@@ -115,7 +125,7 @@ export class BreedApiRepository implements BreedRepository {
 
   searchBreeds(criteria: BreedSearchCriteria): Observable<Breed[]> {
     return this.getAllBreeds().pipe(
-      map((breeds) => this.filterBreeds(breeds, criteria))
+      switchMap((breeds) => this.filterBreedsWithImages(breeds, criteria))
     );
   }
 }

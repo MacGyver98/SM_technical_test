@@ -2,6 +2,7 @@
   <mat-form-field appearance="outline" floatLabel="always" class="search-field">
     <mat-label>Search breeds</mat-label>
     <input
+      #searchInput
       matInput
       [formControl]="searchControl"
       [matAutocomplete]="auto"
@@ -9,7 +10,7 @@
     />
 
     <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let breed of filteredBreeds" [value]="breed.name">
+      <mat-option *ngFor="let breed of breeds" [value]="breed.name" (click)="onBreedSelected(breed)">
         <div class="breed-item">
           <img
             *ngIf="breed.imageUrl"

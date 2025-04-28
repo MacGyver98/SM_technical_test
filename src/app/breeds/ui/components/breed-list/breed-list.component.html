@@ -1,10 +1,13 @@
 <div class="breed-list">
-  <ng-container *ngIf="breeds && breeds.length > 0; else noBreeds">
+  <ng-container
+    *ngIf="selectedBreeds && selectedBreeds.length > 0; else noBreeds"
+  >
     <div class="grid-container">
       <app-breed-card
-        *ngFor="let breed of breeds; trackBy: trackByBreedName"
+        *ngFor="let breed of selectedBreeds; trackBy: trackByBreedName"
         [breed]="breed"
-        (loadImages)="loadBreedImages($event.breedName, $event.subBreed)">
+        (loadImages)="loadBreedImages($event.breedName, $event.subBreed)"
+      >
       </app-breed-card>
     </div>
   </ng-container>

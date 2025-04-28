@@ -41,4 +41,54 @@
       font-size: 1.2rem;
     }
   }
+
+  .selected-breed-images {
+    margin-top: 24px;
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      color: mat.get-color-from-palette(mat.$blue-palette, 800);
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+    }
+
+    .image-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid mat.get-color-from-palette(mat.$grey-palette, 300);
+      border-radius: 8px;
+      background-color: mat.get-color-from-palette(mat.$grey-palette, 50);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      img.thumbnail {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin-bottom: 8px;
+      }
+
+      .image-info {
+        text-align: center;
+
+        h3 {
+          font-size: 1rem;
+          margin: 0;
+          color: mat.get-color-from-palette(mat.$grey-palette, 800);
+        }
+
+        p {
+          font-size: 0.875rem;
+          margin: 4px 0 0;
+          color: mat.get-color-from-palette(mat.$grey-palette, 600);
+        }
+      }
+    }
+  }
 }

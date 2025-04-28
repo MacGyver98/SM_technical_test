@@ -1,5 +1,7 @@
 <div class="breeds-page">
-  <app-breed-search (searchChange)="onSearch($event)" />
+  <app-breed-search (searchChange)="onSearch($event)" (breedSelected)="onBreedSelected($event)" 
+  [breeds]="breeds$ | async"/>
+  <!-- <app-breed-search (breedSelected)="onBreedSelected($event)" /> -->
 
   <!-- Loading State -->
   <mat-progress-bar
@@ -15,7 +17,23 @@
   </div>
 
   <app-breed-list
-    [breeds]="breeds$ | async"
+    [selectedBreeds]="selectedBreeds$ | async"
     (imagesLoaded)="handleImagesLoaded($event)"
   />
+
+  
+  
+  <!-- <div class="selected-breed-images" *ngIf="(selectedBreed$ | async)?.images?.length > 0">
+    <h2>Selected Breed Images</h2>
+
+    <div class="image-grid">
+      <div *ngFor="let image of (selectedBreed$ | async)?.images" class="image-card">
+        <img [src]="image.url" [alt]="image.breedName" class="thumbnail" />
+        <div class="image-info">
+          <h3>{{ image.breedName }}</h3>
+          <p *ngIf="image.subBreedName">{{ image.subBreedName }}</p>
+        </div>
+      </div>
+    </div>
+  </div> -->
 </div>

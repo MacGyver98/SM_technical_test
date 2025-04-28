@@ -4,8 +4,9 @@ import { catchError, finalize, takeUntil } from 'rxjs/operators';
 import { BreedService } from '../../../../core/services/breed.service';
 import { BreedState } from '../../../application/state/breed.state';
 import {
+  Breed,
   BreedImage,
-  BreedSearchCriteria
+  BreedSearchCriteria,
 } from '../../../domain/models/breed.model';
 
 @Component({
@@ -17,6 +18,7 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   breeds$ = this.breedState.breeds$;
   isLoading$ = this.breedState.loading$;
+  selectedBreeds$ = this.breedState.selectedBreed$;
   error: string | null = null;
 
   constructor(
@@ -28,6 +30,7 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // this.loadAllBreeds();
     this.detectLoadingState();
+    this.selectedBreeds$.subscribe();
   }
 
   // loadAllBreeds(): void {
@@ -105,5 +108,12 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
     this.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.cdr.markForCheck();
     });
+  }
+
+  onBreedSelected(breed: Breed | null): void {
+    this.breedState.setSelectedBreed(breed);
+    if (breed) {
+      this.breedService.loadBreedImages(breed.name).subscribe();
+    }
   }
 }

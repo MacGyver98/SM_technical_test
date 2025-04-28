@@ -1,4 +1,13 @@
-import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  Input,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { BreedSearchCriteria } from '../../../domain/models/breed.model';
@@ -10,42 +19,39 @@ import { Breed } from '../../../domain/models/breed.model';
   templateUrl: './breed-search.component.html',
   styleUrls: ['./breed-search.component.scss'],
 })
-export class BreedSearchComponent implements OnDestroy {
+export class BreedSearchComponent implements OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
 
   searchControl = new FormControl('');
   includeSubBreedsControl = new FormControl(true);
-  filteredBreeds: Breed[] = [];
+
+  @Input() breeds: Breed[] | null = [];
 
   @Output() searchChange = new EventEmitter<BreedSearchCriteria>();
+  @Output() breedSelected = new EventEmitter<Breed | null>();
 
-  constructor(private breedService: BreedService) {
-    this.setupSearch();
+  @ViewChild('searchInput', { static: true }) searchInput!: ElementRef;
+
+  constructor(private breedService: BreedService) {}
+
+  ngAfterViewInit(): void {
+    this.subscribeToInputChanges();
+    this.addFocusEventListener();
   }
 
-  private setupSearch(): void {
+  private subscribeToInputChanges(): void {
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((searchTerm) => {
-        this.breedService.searchBreeds({
-          searchTerm: searchTerm?.trim() || '',
-          includeSubBreeds: this.includeSubBreedsControl.value || false,
-        }).subscribe((breeds) => {
-          this.filteredBreeds = breeds;
-          this.filteredBreeds.forEach(breed => {
-            this.breedService
-              .getRandomBreedImage(breed.name)
-              .subscribe((imageUrl) => {
-                breed.imageUrl = imageUrl;
-              });
-          });
-          this.emitSearchCriteria();
-        });
+        this.emitSearchCriteria();
       });
+  }
 
-    this.includeSubBreedsControl.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.emitSearchCriteria());
+  private addFocusEventListener(): void {
+    this.searchInput.nativeElement.addEventListener('focus', () => {
+      this.emitSearchCriteria();
+      // this.filteredBreeds = this.filteredBreeds.length ? this.filteredBreeds : [];
+    });
   }
 
   private emitSearchCriteria(): void {
@@ -57,10 +63,15 @@ export class BreedSearchComponent implements OnDestroy {
 
   clearSearch(): void {
     this.searchControl.reset('');
+    this.breedSelected.emit(null);
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  onBreedSelected(breed: Breed): void {
+    this.breedSelected.emit(breed);
   }
 }
