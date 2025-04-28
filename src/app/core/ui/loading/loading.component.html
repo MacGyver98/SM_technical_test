@@ -1,0 +1,10 @@
+<div class="loading-container" [class.global]="isGlobal">
+  <mat-progress-spinner
+    [diameter]="diameter"
+    [strokeWidth]="strokeWidth"
+    mode="indeterminate"
+    color="primary">
+  </mat-progress-spinner>
+  
+  <p class="loading-message" *ngIf="message">{{ message }}</p>
+</div>

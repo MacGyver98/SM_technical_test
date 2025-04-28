@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "dog-api-search": {
+    "SM_technical_test": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -15,11 +15,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/dog-api-search",
+            "outputPath": "dist/SM_technical_test",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -33,12 +33,7 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -54,7 +49,8 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "baseHref": "SM_technical_test"
             },
             "development": {
               "optimization": false,
@@ -68,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "dog-api-search:build:production"
+              "buildTarget": "SM_technical_test:build:production"
             },
             "development": {
-              "buildTarget": "dog-api-search:build:development"
+              "buildTarget": "SM_technical_test:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +75,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "dog-api-search:build"
+            "buildTarget": "SM_technical_test:build"
           }
         },
         "test": {
@@ -109,3 +105,5 @@
     "analytics": "3dffd600-babb-488f-9f5c-d11965e3bebb"
   }
 }
+
+

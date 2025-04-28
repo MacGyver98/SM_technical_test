@@ -1,18 +1,28 @@
 <div class="breed-list">
-  <ng-container *ngIf="breeds && breeds.length > 0; else noBreeds">
+  <ng-container
+    *ngIf="selectedBreeds && selectedBreeds.length > 0; else noBreeds"
+  >
     <div class="grid-container">
       <app-breed-card
-        *ngFor="let breed of breeds; trackBy: trackByBreedName"
+        *ngFor="let breed of selectedBreeds; trackBy: trackByBreedName"
         [breed]="breed"
-        (loadImages)="loadBreedImages($event.breedName, $event.subBreed)">
+        (loadImages)="loadBreedImages($event.breedName, $event.subBreed)"
+      >
       </app-breed-card>
     </div>
   </ng-container>
 
   <ng-template #noBreeds>
-    <div class="no-results">
+    <div class="no-results" *ngIf="!(loading$ | async); else loading">
       <mat-icon>search_off</mat-icon>
       <p>No breeds to display</p>
     </div>
+
+    <ng-template #loading>
+      <div class="no-results">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Searching for breeds...</p>
+      </div>
+    </ng-template>
   </ng-template>
 </div>

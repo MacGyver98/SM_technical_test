@@ -1,17 +1,16 @@
 import {
-  Component,
-  Input,
+  AfterViewInit,
   ChangeDetectionStrategy,
-  Output,
+  Component,
+  ElementRef,
   EventEmitter,
+  Input,
+  Output,
+  Renderer2,
 } from '@angular/core';
-import {
-  Breed,
-  BreedImage,
-  LoadBreedImagesEvent,
-} from '../../../domain/models/breed.model';
+import { catchError, Observable, of } from 'rxjs';
+import { Breed, BreedImage } from '../../../domain/models/breed.model';
 import { BreedApiRepository } from '../../../infrastructure/repositories/breed-api.repository';
-import { catchError, of } from 'rxjs';
 import { BreedState } from './../../../application/state/breed.state';
 
 @Component({
@@ -21,15 +20,19 @@ import { BreedState } from './../../../application/state/breed.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreedListComponent {
-  @Input() breeds: Breed[] | null = [];
+  @Input() selectedBreeds: Breed[] | null = [];
   @Output() imagesLoaded = new EventEmitter<{
     breedName: string;
     images: BreedImage[];
   }>();
 
+  loading$: Observable<boolean> = this.breedState.loading$;
+
   constructor(
     private breedApiRepository: BreedApiRepository,
-    private breedState: BreedState
+    private breedState: BreedState,
+    private el: ElementRef,
+    private renderer: Renderer2
   ) {}
 
   trackByBreedName(index: number, breed: Breed): string {
@@ -46,7 +49,8 @@ export class BreedListComponent {
         })
       )
       .subscribe((images) => {
-        this.breedState.addImagesToBreed(breedName, images);
+        this.breedState.addImagesToSelectedBreeds(breedName, images);
+        this.imagesLoaded.emit({ breedName, images });
       });
   }
 }

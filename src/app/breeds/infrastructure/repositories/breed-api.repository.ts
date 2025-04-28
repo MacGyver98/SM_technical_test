@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, forkJoin } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import {
   Breed,
   BreedImage,
@@ -19,19 +19,22 @@ export class BreedApiRepository implements BreedRepository {
   private transformToBreedModels(
     apiResponse: Record<string, string[]>
   ): Breed[] {
-    return Object.entries(apiResponse).map(([name, subBreeds]) => ({
-      name,
-      subBreeds,
-      images: [], // Initialize empty array
-    }));
+    const transformedBreeds = Object.entries(apiResponse).map(
+      ([name, subBreeds]) => ({
+        name,
+        subBreeds,
+        images: [], // Initialize empty array
+      })
+    );
+    return transformedBreeds;
   }
 
-  private filterBreeds(
+  private filterBreedsWithImages(
     breeds: Breed[],
     criteria: BreedSearchCriteria
-  ): Breed[] {
+  ): Observable<Breed[]> {
     const term = criteria.searchTerm.toLowerCase();
-    return breeds.filter((breed) => {
+    const filteredBreeds = breeds.filter((breed) => {
       const nameMatch = breed.name.toLowerCase().includes(term);
       const subBreedMatch =
         criteria.includeSubBreeds &&
@@ -39,6 +42,14 @@ export class BreedApiRepository implements BreedRepository {
 
       return nameMatch || subBreedMatch;
     });
+
+    const breedsWithImages$ = filteredBreeds.map((breed) =>
+      this.getRandomBreedImage(breed.name).pipe(
+        map((imageUrl) => ({ ...breed, imageUrl }))
+      )
+    );
+
+    return breedsWithImages$.length ? forkJoin(breedsWithImages$) : of([]);
   }
 
   getAllBreeds(): Observable<Breed[]> {
@@ -65,11 +76,19 @@ export class BreedApiRepository implements BreedRepository {
       .get<{ message: string[] }>(`${this.API_URL}/breed/${path}/images`)
       .pipe(
         map((response) => {
-          const images = response.message.map((url) => ({
-            url,
-            breedName,
-            subBreedName: subBreed,
-          }));
+          const images = response.message.map((url) => {
+            const urlParts = url.split('/');
+            const breedInfo = urlParts[4].split('-');
+            const extractedBreedName = breedInfo[0];
+            const extractedSubBreedName = breedInfo[1] || undefined;
+
+            return {
+              url,
+              breedName: extractedBreedName,
+              subBreedName: extractedSubBreedName,
+              isLoaded: false,
+            };
+          });
           this.breedImagesCache.set(cacheKey, images);
           return images;
         }),
@@ -80,9 +99,33 @@ export class BreedApiRepository implements BreedRepository {
       );
   }
 
+  getRandomBreedImage(breedName: string): Observable<string> {
+    const cacheKey = `${breedName}-random`;
+
+    if (this.breedImagesCache.has(cacheKey)) {
+      return of(this.breedImagesCache.get(cacheKey)![0].url);
+    }
+
+    return this.http
+      .get<{ message: string }>(
+        `${this.API_URL}/breed/${breedName}/images/random`
+      )
+      .pipe(
+        map((response) => {
+          const imageUrl = response.message;
+          this.breedImagesCache.set(cacheKey, [{ url: imageUrl, breedName }]);
+          return imageUrl;
+        }),
+        catchError((error) => {
+          console.error('Failed to fetch random breed image:', error);
+          return of(''); // Return empty string on error
+        })
+      );
+  }
+
   searchBreeds(criteria: BreedSearchCriteria): Observable<Breed[]> {
     return this.getAllBreeds().pipe(
-      map((breeds) => this.filterBreeds(breeds, criteria))
+      switchMap((breeds) => this.filterBreedsWithImages(breeds, criteria))
     );
   }
 }

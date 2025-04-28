@@ -6,13 +6,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { BreedState } from './application/state/breed.state';
 import { GetBreedsUseCase } from './application/usecases/get-breeds.usecase';
 import { SearchBreedsUseCase } from './application/usecases/search-breeds.usecase';
 import { BreedApiRepository } from './infrastructure/repositories/breed-api.repository';
@@ -20,6 +22,8 @@ import { BreedCardComponent } from './ui/components/breed-card/breed-card.compon
 import { BreedListComponent } from './ui/components/breed-list/breed-list.component';
 import { BreedSearchComponent } from './ui/components/breed-search/breed-search.component';
 import { BreedsPageComponent } from './ui/pages/breeds-page/breeds-page.component';
+import { BreedsRoutingModule } from './breeds-routing.module';
+import { FilterImagesPipe } from './ui/pipes/filter-images.pipe';
 
 
 @NgModule({
@@ -28,6 +32,7 @@ import { BreedsPageComponent } from './ui/pages/breeds-page/breeds-page.componen
     BreedCardComponent,
     BreedSearchComponent,
     BreedsPageComponent,
+    FilterImagesPipe,
   ],
   imports: [
     CommonModule,
@@ -35,24 +40,28 @@ import { BreedsPageComponent } from './ui/pages/breeds-page/breeds-page.componen
     ReactiveFormsModule,
     MatCardModule,
     MatChipsModule,
-    MatInputModule,
     MatButtonModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatTooltipModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatSlideToggleModule,
+    BreedsRoutingModule,
   ],
-  exports: [BreedsPageComponent],
+  exports: [
+    BreedsPageComponent,
+    FilterImagesPipe,
+  ],
   providers: [
     // Repository implementation
     { provide: 'BreedRepository', useClass: BreedApiRepository },
 
     // Use cases
     GetBreedsUseCase,
-    SearchBreedsUseCase,
-
-    // State (optional)
-    BreedState,
+    SearchBreedsUseCase
   ],
 })
 export class BreedsModule {}
