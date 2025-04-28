@@ -20,6 +20,7 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
   isLoading$ = this.breedState.loading$;
   selectedBreeds$ = this.breedState.selectedBreed$;
   error: string | null = null;
+  firstLoading: boolean = false;
 
   constructor(
     private breedService: BreedService,
@@ -28,31 +29,33 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // this.loadAllBreeds();
+    this.loadAllBreeds();
     this.detectLoadingState();
     this.selectedBreeds$.subscribe();
   }
 
-  // loadAllBreeds(): void {
-  //   this.error = null;
-  //   this.breedState.setLoading(true);
+  loadAllBreeds(): void {
+    this.error = null;
+    this.breedState.setLoading(true);
+    this.firstLoading = true;
 
-  //   this.breedService
-  //     .loadAllBreeds()
-  //     .pipe(
-  //       takeUntil(this.destroy$),
-  //       finalize(() => {
-  //         this.breedState.setLoading(false);
-  //       }),
-  //       catchError((error) => {
-  //         this.error = 'Failed to load breeds. Please try again later.';
-  //         console.error('Error loading breeds:', error);
-  //         this.breedState.setLoading(false);
-  //         throw error;
-  //       })
-  //     )
-  //     .subscribe();
-  // }
+    this.breedService
+      .loadAllBreeds()
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.breedState.setLoading(false);
+          this.firstLoading = false;
+        }),
+        catchError((error) => {
+          this.error = 'Failed to load breeds. Please try again later.';
+          console.error('Error loading breeds:', error);
+          this.breedState.setLoading(false);
+          throw error;
+        })
+      )
+      .subscribe();
+  }
 
   onSearch(criteria: BreedSearchCriteria): void {
     this.error = null;

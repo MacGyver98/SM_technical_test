@@ -1,15 +1,12 @@
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 .search-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
   background-color: mat.get-color-from-palette(mat.$grey-palette, 50);
   border-radius: 8px;
-  margin-bottom: 24px;
-
-  @include mat.elevation(2);
+  margin-bottom: 16px;
 
   .search-field {
     width: 100%;

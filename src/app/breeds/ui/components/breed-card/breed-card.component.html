@@ -1,73 +1,65 @@
-<mat-card class="breed-card" [class.expanded]="showImages">
-  <!-- Breed Header Section -->
+<mat-card class="breed-card">
   <mat-card-header>
-    <mat-card-title class="breed-title">
-      {{ breed.name | titlecase }}
-    </mat-card-title>
+    <div
+      mat-card-avatar
+      class="breed-random-image"
+      [ngStyle]="{ 'background-image': 'url(' + breed.imageUrl + ')' }"
+      *ngIf="breed.imageUrl"
+    ></div>
+
+    <mat-card-title class="breed-title">{{
+      breed.name | titlecase
+    }}</mat-card-title>
 
     <mat-card-subtitle *ngIf="breed.subBreeds?.length" class="subbreed-count">
       {{ breed.subBreeds.length }} sub-breed{{
         breed.subBreeds.length !== 1 ? "s" : ""
       }}
     </mat-card-subtitle>
-
-    <button
-      mat-icon-button
-      class="toggle-button"
-      (click)="toggleImages()"
-      matTooltip="{{ showImages ? 'Hide images' : 'Show images' }}"
-    >
-      <mat-icon>{{ showImages ? "expand_less" : "expand_more" }}</mat-icon>
-    </button>
   </mat-card-header>
 
-  <!-- Main Content Section -->
   <mat-card-content>
-    <!-- Sub-breeds List (only shown if exists) -->
-    <div *ngIf="breed.subBreeds?.length" class="subbreeds-container">
-      <mat-chip-listbox>
-        <mat-chip-option
+    <p *ngIf="!breed.subBreeds?.length">This breed has no sub-breeds.</p>
+
+    <div *ngIf="breed.subBreeds?.length">
+      <mat-chip-listbox class="subbreed-chips">
+        <mat-chip
           *ngFor="let subBreed of breed.subBreeds"
-          (click)="loadSubBreedImages(subBreed)"
+          [class.selected]="selectedSubBreed === subBreed"
+          (click)="toggleSubBreedSelection(subBreed)"
         >
-          {{ subBreed | titlecase }}
-        </mat-chip-option>
+          {{ subBreed }}
+        </mat-chip>
       </mat-chip-listbox>
     </div>
-
-    <!-- Images Gallery (lazy loaded) -->
-    <div class="images-container" *ngIf="showImages">
-      <ng-container *ngIf="breed.images?.length; else noImages">
-        <div class="image-grid">
-          <ng-container *ngFor="let image of breed.images">
-            <img
-              [src]="image.url"
-              [alt]="'Image of ' + breed.name"
-              class="breed-image"
-              loading="lazy"
-              (load)="onImageLoad(image)"
-              (error)="onImageError($event)"
-              [class.dummy-image]="!image.isLoaded"
-            />
-            <div *ngIf="!image.isLoaded" class="dummy-image-placeholder"></div>
-          </ng-container>
-        </div>
-      </ng-container>
-
-      <ng-template #noImages>
-        <div class="no-images">
-          <mat-icon>image_not_supported</mat-icon>
-          <p>No images available</p>
-        </div>
-      </ng-template>
-    </div>
   </mat-card-content>
-
-  <!-- Loading State -->
-  <mat-progress-bar
-    *ngIf="isLoadingImages"
-    mode="indeterminate"
-    color="accent"
-    class="loading-bar"
-  ></mat-progress-bar>
 </mat-card>
+
+<div class="images-container" *ngIf="selectedSubBreed">
+  <div class="masonry-image-grid">
+    <div
+      class="masonry-item"
+      *ngFor="let image of breed.images || [] | filterImages : selectedSubBreed"
+    >
+      <img
+        data-src="{{ image.url }}"
+        alt="Image of {{ breed.name + ' ' + selectedSubBreed }}"
+        class="breed-image"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="images-container" *ngIf="!breed.subBreeds?.length">
+  <div class="masonry-image-grid">
+    <div class="masonry-item" *ngFor="let image of breed.images">
+      <img
+        [src]="image.url"
+        [alt]="'Image of ' + breed.name"
+        class="breed-image"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</div>

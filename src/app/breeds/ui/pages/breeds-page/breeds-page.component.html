@@ -1,6 +1,10 @@
 <div class="breeds-page">
-  <app-breed-search (searchChange)="onSearch($event)" (breedSelected)="onBreedSelected($event)" 
-  [breeds]="breeds$ | async"/>
+  <app-breed-search
+    (searchChange)="onSearch($event)"
+    (breedSelected)="onBreedSelected($event)"
+    [breeds]="breeds$ | async"
+    [firstLoading]="firstLoading"
+  />
   <!-- <app-breed-search (breedSelected)="onBreedSelected($event)" /> -->
 
   <!-- Loading State -->
@@ -21,8 +25,6 @@
     (imagesLoaded)="handleImagesLoaded($event)"
   />
 
-  
-  
   <!-- <div class="selected-breed-images" *ngIf="(selectedBreed$ | async)?.images?.length > 0">
     <h2>Selected Breed Images</h2>
 

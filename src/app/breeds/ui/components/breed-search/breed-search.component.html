@@ -1,16 +1,21 @@
 <div class="search-container">
   <mat-form-field appearance="outline" floatLabel="always" class="search-field">
     <mat-label>Search breeds</mat-label>
+
     <input
       #searchInput
       matInput
       [formControl]="searchControl"
       [matAutocomplete]="auto"
       placeholder="Type to search..."
+      [disabled]="firstLoading"
     />
 
-    <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let breed of breeds" [value]="breed.name" (click)="onBreedSelected(breed)">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onBreedSelected($event.option.value)">
+      <mat-option
+        *ngFor="let breed of breeds"
+        [value]="breed.name"
+      >
         <div class="breed-item">
           <img
             *ngIf="breed.imageUrl"
@@ -20,8 +25,11 @@
             loading="lazy"
           />
           <span class="breed-name">{{ breed.name }}</span>
-          <span *ngIf="includeSubBreedsControl.value && breed.subBreeds.length > 0" class="subbreeds-text">
-            ({{ breed.subBreeds.join(', ') }})
+          <span
+            *ngIf="includeSubBreedsControl.value && breed.subBreeds.length > 0"
+            class="subbreeds-text"
+          >
+            ({{ breed.subBreeds.join(", ") }})
           </span>
         </div>
       </mat-option>

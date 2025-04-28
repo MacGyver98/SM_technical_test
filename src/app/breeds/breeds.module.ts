@@ -23,6 +23,7 @@ import { BreedListComponent } from './ui/components/breed-list/breed-list.compon
 import { BreedSearchComponent } from './ui/components/breed-search/breed-search.component';
 import { BreedsPageComponent } from './ui/pages/breeds-page/breeds-page.component';
 import { BreedsRoutingModule } from './breeds-routing.module';
+import { FilterImagesPipe } from './ui/pipes/filter-images.pipe';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { BreedsRoutingModule } from './breeds-routing.module';
     BreedCardComponent,
     BreedSearchComponent,
     BreedsPageComponent,
+    FilterImagesPipe,
   ],
   imports: [
     CommonModule,
@@ -49,7 +51,10 @@ import { BreedsRoutingModule } from './breeds-routing.module';
     MatSlideToggleModule,
     BreedsRoutingModule,
   ],
-  exports: [BreedsPageComponent],
+  exports: [
+    BreedsPageComponent,
+    FilterImagesPipe,
+  ],
   providers: [
     // Repository implementation
     { provide: 'BreedRepository', useClass: BreedApiRepository },

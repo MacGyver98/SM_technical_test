@@ -1,15 +1,15 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
-  Output
+  Output,
+  Renderer2,
 } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
-import {
-  Breed,
-  BreedImage
-} from '../../../domain/models/breed.model';
+import { Breed, BreedImage } from '../../../domain/models/breed.model';
 import { BreedApiRepository } from '../../../infrastructure/repositories/breed-api.repository';
 import { BreedState } from './../../../application/state/breed.state';
 
@@ -30,7 +30,9 @@ export class BreedListComponent {
 
   constructor(
     private breedApiRepository: BreedApiRepository,
-    private breedState: BreedState
+    private breedState: BreedState,
+    private el: ElementRef,
+    private renderer: Renderer2
   ) {}
 
   trackByBreedName(index: number, breed: Breed): string {

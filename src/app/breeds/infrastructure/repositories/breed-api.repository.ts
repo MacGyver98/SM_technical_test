@@ -100,7 +100,7 @@ export class BreedApiRepository implements BreedRepository {
   }
 
   getRandomBreedImage(breedName: string): Observable<string> {
-    const cacheKey = `${breedName}`;
+    const cacheKey = `${breedName}-random`;
 
     if (this.breedImagesCache.has(cacheKey)) {
       return of(this.breedImagesCache.get(cacheKey)![0].url);

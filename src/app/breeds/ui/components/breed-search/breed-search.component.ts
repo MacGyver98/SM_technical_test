@@ -26,6 +26,7 @@ export class BreedSearchComponent implements OnDestroy, AfterViewInit {
   includeSubBreedsControl = new FormControl(true);
 
   @Input() breeds: Breed[] | null = [];
+  @Input() firstLoading: boolean = false;
 
   @Output() searchChange = new EventEmitter<BreedSearchCriteria>();
   @Output() breedSelected = new EventEmitter<Breed | null>();
@@ -71,7 +72,12 @@ export class BreedSearchComponent implements OnDestroy, AfterViewInit {
     this.destroy$.complete();
   }
 
-  onBreedSelected(breed: Breed): void {
+  onBreedSelected(breedName: string): void {
+    const breed = this.breeds?.find((b) => b.name === breedName) || null;
     this.breedSelected.emit(breed);
+  }
+
+  getBreedByName(name: string): Breed | null {
+    return this.breeds?.find((breed) => breed.name === name) || null;
   }
 }
