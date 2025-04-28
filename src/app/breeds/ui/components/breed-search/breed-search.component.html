@@ -4,8 +4,27 @@
     <input
       matInput
       [formControl]="searchControl"
+      [matAutocomplete]="auto"
       placeholder="Type to search..."
     />
+
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let breed of filteredBreeds" [value]="breed.name">
+        <div class="breed-item">
+          <img
+            *ngIf="breed.imageUrl"
+            [src]="breed.imageUrl"
+            alt="{{ breed.name }}"
+            class="breed-image"
+            loading="lazy"
+          />
+          <span class="breed-name">{{ breed.name }}</span>
+          <span *ngIf="includeSubBreedsControl.value && breed.subBreeds.length > 0" class="subbreeds-text">
+            ({{ breed.subBreeds.join(', ') }})
+          </span>
+        </div>
+      </mat-option>
+    </mat-autocomplete>
 
     <button
       mat-icon-button

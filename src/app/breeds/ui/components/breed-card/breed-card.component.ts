@@ -27,7 +27,6 @@ export class BreedCardComponent {
   }
 
   loadBreedImages(): void {
-    this.isLoadingImages = true;
     this.loadImages.emit({
       breedName: this.breed.name,
     });
@@ -35,15 +34,14 @@ export class BreedCardComponent {
   }
 
   loadSubBreedImages(subBreed: string): void {
-    this.isLoadingImages = true;
     this.loadImages.emit({
       breedName: this.breed.name,
       subBreed,
     });
   }
 
-  onImageLoad(): void {
-    // Can be used for analytics or other tracking
+  onImageLoad(image: BreedImage): void {
+    image.isLoaded = true;
   }
 
   onImageError(event: Event): void {

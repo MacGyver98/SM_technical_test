@@ -32,3 +32,26 @@
     }
   }
 }
+
+.breed-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .breed-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .breed-name {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .subbreeds-text {
+    font-size: 14px;
+    color: mat.get-color-from-palette(mat.$grey-palette, 600);
+  }
+}

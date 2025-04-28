@@ -68,17 +68,47 @@ export class BreedApiRepository implements BreedRepository {
       .get<{ message: string[] }>(`${this.API_URL}/breed/${path}/images`)
       .pipe(
         map((response) => {
-          const images = response.message.map((url) => ({
-            url,
-            breedName,
-            subBreedName: subBreed,
-          }));
+          const images = response.message.map((url) => {
+            const urlParts = url.split('/');
+            const breedInfo = urlParts[4].split('-');
+            const extractedBreedName = breedInfo[0];
+            const extractedSubBreedName = breedInfo[1] || undefined;
+
+            return {
+              url,
+              breedName: extractedBreedName,
+              subBreedName: extractedSubBreedName,
+              isLoaded: false,
+            };
+          });
           this.breedImagesCache.set(cacheKey, images);
           return images;
         }),
         catchError((error) => {
           console.error('Failed to fetch breed images:', error);
           return of([]); // Return empty array on error
+        })
+      );
+  }
+
+  getRandomBreedImage(breedName: string): Observable<string> {
+    const cacheKey = `${breedName}-random`;
+
+    if (this.breedImagesCache.has(cacheKey)) {
+      return of(this.breedImagesCache.get(cacheKey)![0].url);
+    }
+
+    return this.http
+      .get<{ message: string }>(`${this.API_URL}/breed/${breedName}/images/random`)
+      .pipe(
+        map((response) => {
+          const imageUrl = response.message;
+          this.breedImagesCache.set(cacheKey, [{ url: imageUrl, breedName }]);
+          return imageUrl;
+        }),
+        catchError((error) => {
+          console.error('Failed to fetch random breed image:', error);
+          return of(''); // Return empty string on error
         })
       );
   }

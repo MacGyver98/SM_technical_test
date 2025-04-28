@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil, catchError, finalize } from 'rxjs/operators';
-import {
-  Breed,
-  BreedImage,
-  BreedSearchCriteria,
-} from '../../../domain/models/breed.model';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { catchError, finalize, takeUntil } from 'rxjs/operators';
 import { BreedService } from '../../../../core/services/breed.service';
 import { BreedState } from '../../../application/state/breed.state';
+import {
+  BreedImage,
+  BreedSearchCriteria
+} from '../../../domain/models/breed.model';
 
 @Component({
   selector: 'app-breeds-page',
@@ -27,30 +26,30 @@ export class BreedsPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadAllBreeds();
+    // this.loadAllBreeds();
     this.detectLoadingState();
   }
 
-  loadAllBreeds(): void {
-    this.error = null;
-    this.breedState.setLoading(true);
+  // loadAllBreeds(): void {
+  //   this.error = null;
+  //   this.breedState.setLoading(true);
 
-    this.breedService
-      .loadAllBreeds()
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => {
-          this.breedState.setLoading(false);
-        }),
-        catchError((error) => {
-          this.error = 'Failed to load breeds. Please try again later.';
-          console.error('Error loading breeds:', error);
-          this.breedState.setLoading(false);
-          throw error;
-        })
-      )
-      .subscribe();
-  }
+  //   this.breedService
+  //     .loadAllBreeds()
+  //     .pipe(
+  //       takeUntil(this.destroy$),
+  //       finalize(() => {
+  //         this.breedState.setLoading(false);
+  //       }),
+  //       catchError((error) => {
+  //         this.error = 'Failed to load breeds. Please try again later.';
+  //         console.error('Error loading breeds:', error);
+  //         this.breedState.setLoading(false);
+  //         throw error;
+  //       })
+  //     )
+  //     .subscribe();
+  // }
 
   onSearch(criteria: BreedSearchCriteria): void {
     this.error = null;

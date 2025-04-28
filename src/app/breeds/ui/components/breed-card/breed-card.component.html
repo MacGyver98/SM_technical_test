@@ -39,15 +39,18 @@
     <div class="images-container" *ngIf="showImages">
       <ng-container *ngIf="breed.images?.length; else noImages">
         <div class="image-grid">
-          <img
-            *ngFor="let image of breed.images"
-            [src]="image.url"
-            [alt]="'Image of ' + breed.name"
-            class="breed-image"
-            loading="lazy"
-            (load)="onImageLoad()"
-            (error)="onImageError($event)"
-          />
+          <ng-container *ngFor="let image of breed.images">
+            <img
+              [src]="image.url"
+              [alt]="'Image of ' + breed.name"
+              class="breed-image"
+              loading="lazy"
+              (load)="onImageLoad(image)"
+              (error)="onImageError($event)"
+              [class.dummy-image]="!image.isLoaded"
+            />
+            <div *ngIf="!image.isLoaded" class="dummy-image-placeholder"></div>
+          </ng-container>
         </div>
       </ng-container>
 
