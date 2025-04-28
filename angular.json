@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist",
+            "outputPath": "dist/SM_technical_test",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -105,3 +105,5 @@
     "analytics": "3dffd600-babb-488f-9f5c-d11965e3bebb"
   }
 }
+
+
