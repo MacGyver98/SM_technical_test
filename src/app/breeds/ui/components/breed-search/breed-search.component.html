@@ -1,0 +1,58 @@
+<div class="search-container">
+  <mat-form-field appearance="outline" floatLabel="always" class="search-field">
+    <mat-label>Search breeds</mat-label>
+
+    <input
+      #searchInput
+      matInput
+      [formControl]="searchControl"
+      [matAutocomplete]="auto"
+      placeholder="Type to search..."
+      [disabled]="firstLoading"
+    />
+
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onBreedSelected($event.option.value)">
+      <mat-option
+        *ngFor="let breed of breeds"
+        [value]="breed.name"
+      >
+        <div class="breed-item">
+          <img
+            *ngIf="breed.imageUrl"
+            [src]="breed.imageUrl"
+            alt="{{ breed.name }}"
+            class="breed-image"
+            loading="lazy"
+          />
+          <span class="breed-name">{{ breed.name }}</span>
+          <span
+            *ngIf="includeSubBreedsControl.value && breed.subBreeds.length > 0"
+            class="subbreeds-text"
+          >
+            ({{ breed.subBreeds.join(", ") }})
+          </span>
+        </div>
+      </mat-option>
+    </mat-autocomplete>
+
+    <button
+      mat-icon-button
+      matSuffix
+      *ngIf="searchControl.value"
+      (click)="clearSearch()"
+      aria-label="Clear search"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-slide-toggle
+    [formControl]="includeSubBreedsControl"
+    color="primary"
+    class="subbreed-toggle"
+  >
+    Include sub-breeds
+  </mat-slide-toggle>
+</div>

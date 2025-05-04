@@ -1,0 +1,17 @@
+<mat-toolbar color="primary" class="app-header">
+  <button mat-icon-button class="menu-button" aria-label="Menu button">
+    <mat-icon>pets</mat-icon>
+  </button>
+  
+  <span class="app-title">{{ title }}</span>
+
+  <span class="spacer"></span>
+
+  <button mat-icon-button aria-label="GitHub repository">
+    <mat-icon>code</mat-icon>
+  </button>
+</mat-toolbar>
+
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>
