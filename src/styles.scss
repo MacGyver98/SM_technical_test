@@ -1,4 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
+@use "@angular/material" as mat;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+  font-family: "Montserrat", sans-serif;
+}
+body {
+  margin: 0;
+}
+
+/* SCSS function to generate Montserrat font variations */
+@mixin montserrat($weight: 400) {
+  font-family: "Montserrat", sans-serif;
+  font-weight: $weight;
+  font-style: normal;
+}
+
+$dog-breeds-font: mat.define-typography-config(
+  $font-family: "Montserrat",
+);
+
+$dog-breeds-theme: mat.define-light-theme(
+  (
+    typography: $dog-breeds-font,
+  )
+);
+
+@include mat.typography-hierarchy($dog-breeds-font);
+@include mat.all-component-themes($dog-breeds-theme);

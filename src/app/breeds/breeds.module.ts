@@ -51,17 +51,14 @@ import { FilterImagesPipe } from './ui/pipes/filter-images.pipe';
     MatSlideToggleModule,
     BreedsRoutingModule,
   ],
-  exports: [
-    BreedsPageComponent,
-    FilterImagesPipe,
-  ],
+  exports: [BreedsPageComponent, FilterImagesPipe],
   providers: [
     // Repository implementation
-    { provide: 'BreedRepository', useClass: BreedApiRepository },
+    { provide: 'BreedApiRepository', useClass: BreedApiRepository },
 
     // Use cases
     GetBreedsUseCase,
-    SearchBreedsUseCase
+    SearchBreedsUseCase,
   ],
 })
 export class BreedsModule {}

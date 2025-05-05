@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BreedSearchCriteria, Breed } from '../../domain/models/breed.model';
+import { BreedImage } from '../../domain/models/breed.model';
 import { BreedApiRepository } from '../../infrastructure/repositories/breed-api.repository';
 
+
 @Injectable({ providedIn: 'root' })
-export class SearchBreedsUseCase {
+export class LoadBreedImagesUseCase {
   constructor(private breedApiRepository: BreedApiRepository) {}
 
-  execute(criteria: BreedSearchCriteria): Observable<Breed[]> {
-    return this.breedApiRepository.searchBreeds(criteria);
+  execute(breedName: string, subBreed?: string): Observable<BreedImage[]> {
+    return this.breedApiRepository.getBreedImages(breedName, subBreed);
   }
 }

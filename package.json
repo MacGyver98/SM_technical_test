@@ -5,9 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:sm-technical-test": "node dist/sm-technical-test/server/server.mjs"
+    "deploy": "npx angular-cli-ghpages --dir=dist/SM_technical_test"
   },
   "private": true,
   "dependencies": {

@@ -13,6 +13,7 @@ import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { BreedSearchCriteria } from '../../../domain/models/breed.model';
 import { BreedService } from '../../../../core/services/breed.service';
 import { Breed } from '../../../domain/models/breed.model';
+import { SearchBreedsUseCase } from '../../../application/usecases/search-breeds.usecase';
 
 @Component({
   selector: 'app-breed-search',
@@ -33,7 +34,10 @@ export class BreedSearchComponent implements OnDestroy, AfterViewInit {
 
   @ViewChild('searchInput', { static: true }) searchInput!: ElementRef;
 
-  constructor(private breedService: BreedService) {}
+  constructor(
+    private breedService: BreedService,
+    private searchBreedsUseCase: SearchBreedsUseCase
+  ) {}
 
   ngAfterViewInit(): void {
     this.subscribeToInputChanges();
@@ -51,14 +55,19 @@ export class BreedSearchComponent implements OnDestroy, AfterViewInit {
   private addFocusEventListener(): void {
     this.searchInput.nativeElement.addEventListener('focus', () => {
       this.emitSearchCriteria();
-      // this.filteredBreeds = this.filteredBreeds.length ? this.filteredBreeds : [];
     });
   }
 
   private emitSearchCriteria(): void {
-    this.searchChange.emit({
+    const criteria: BreedSearchCriteria = {
       searchTerm: this.searchControl.value?.trim() || '',
       includeSubBreeds: this.includeSubBreedsControl.value || false,
+    };
+
+    this.searchChange.emit(criteria);
+
+    this.searchBreedsUseCase.execute(criteria).subscribe((breeds) => {
+      this.breeds = breeds;
     });
   }
 
