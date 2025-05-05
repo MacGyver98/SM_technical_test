@@ -8,7 +8,8 @@ import {
   Output,
   Renderer2,
 } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Breed, BreedImage } from '../../../domain/models/breed.model';
 import { BreedApiRepository } from '../../../infrastructure/repositories/breed-api.repository';
 import { BreedState } from './../../../application/state/breed.state';
@@ -27,6 +28,7 @@ export class BreedListComponent {
   }>();
 
   loading$: Observable<boolean> = this.breedState.loading$;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private breedApiRepository: BreedApiRepository,
@@ -34,6 +36,11 @@ export class BreedListComponent {
     private el: ElementRef,
     private renderer: Renderer2
   ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   trackByBreedName(index: number, breed: Breed): string {
     return breed.name;
@@ -43,6 +50,7 @@ export class BreedListComponent {
     this.breedApiRepository
       .getBreedImages(breedName, subBreed)
       .pipe(
+        takeUntil(this.destroy$),
         catchError((error) => {
           console.error('Error loading images:', error);
           return of([]);
